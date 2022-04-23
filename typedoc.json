@@ -1,0 +1,6 @@
+{
+  "entryPoints": [
+    "./src/mod1.ts"
+  ], 
+  "out": "./docs"
+}
