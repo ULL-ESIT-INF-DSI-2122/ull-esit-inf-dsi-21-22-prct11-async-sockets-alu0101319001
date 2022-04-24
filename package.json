@@ -2,7 +2,7 @@
   "name": "ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-alu0101319001",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "note-app.js",
   "scripts": {
     "test": "mocha",
     "coverage": "nyc npm test && nyc report --reporter=lcov",

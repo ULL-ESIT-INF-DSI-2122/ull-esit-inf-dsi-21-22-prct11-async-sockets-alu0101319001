@@ -1,33 +1,29 @@
 /* eslint-disable max-len */
 import chalk from 'chalk';
 import fs from 'fs';
-const colorRegister = ['red', 'yellow', 'green', 'blue'];
+export const colorRegister = ['red', 'yellow', 'green', 'blue'];
 
-export function printWithColor(print: string, color: string) {
+export function printWithColor(print: string, color: string): string {
   switch (color) {
     case 'red': {
-      console.log(chalk.red(print));
-      break;
+      return chalk.red(print);
     }
     case 'yellow': {
-      console.log(chalk.yellow(print));
-      break;
+      return chalk.yellow(print);
     }
     case 'blue': {
-      console.log(chalk.blue(print));
-      break;
+      return chalk.blue(print);
     }
     case 'green': {
-      console.log(chalk.green(print));
-      break;
+      return chalk.green(print);
     }
     default: {
-      console.log(chalk.red('Error: Unrecognizable color'));
+      return chalk.red('Error: Unrecognizable color');
     }
   }
 }
 
-export function add(userParam: string, titleParam: string, bodyParam: string, colorParam: string) {
+export function add(userParam: string, titleParam: string, bodyParam: string, colorParam: string): string {
   if (!fs.existsSync(`./fileSystem/${userParam}`)) {
     fs.mkdirSync(`./fileSystem/${userParam}/`, {recursive: true});
   }
@@ -38,28 +34,31 @@ export function add(userParam: string, titleParam: string, bodyParam: string, co
     color: 'empty',
   };
 
+  let out:string = '';
+
   if ((!fs.existsSync(`./fileSystem/${userParam}/${titleParam}.json`))) {
     if (colorRegister.includes(colorParam)) {
       obj.title = titleParam;
       obj.body = bodyParam;
       obj.color = colorParam;
       const addJson = JSON.stringify(obj);
-      fs.writeFile(`./fileSystem/${userParam}/${titleParam}.json`, addJson, (err) => {
-        if (err) {
-          console.log(chalk.red('Error: Something went wrong when writing note'));
-        } else {
-          console.log(chalk.green('New note added!'));
-        }
-      });
+      try {
+        fs.writeFileSync(`./fileSystem/${userParam}/${titleParam}.json`, addJson);
+        out = chalk.green('New note added!');
+      } catch (err) {
+        out = chalk.red('Error: Something went wrong when writing note');
+      }
     } else {
-      console.log(chalk.red('Error: Color not allowed'));
+      out = chalk.red('Error: Color not allowed');
     }
   } else {
-    console.log(chalk.red('Error: Note title taken!'));
+    out = chalk.red('Error: Note title taken!');
   }
+  return out;
 }
 
-export function modify(userParam: string, titleParam: string, newTitle?: string, bodyParam?: string, colorParam?: string) {
+export function modify(userParam: string, titleParam: string, newTitle?: string, bodyParam?: string, colorParam?: string): string {
+  let out: string;
   if ((fs.existsSync(`./fileSystem/${userParam}/${titleParam}.json`))) {
     const data = fs.readFileSync(`./fileSystem/${userParam}/${titleParam}.json`, 'utf8');
     const value = JSON.parse(data.toString());
@@ -68,7 +67,7 @@ export function modify(userParam: string, titleParam: string, newTitle?: string,
       try {
         fs.renameSync(`./fileSystem/${userParam}/${titleParam}.json`, `./fileSystem/${userParam}/${value.title}.json`);
       } catch (err) {
-        console.log(chalk.red('Error: Something went wrong when rename note file'));
+        out = chalk.red('Error: Something went wrong when rename note file');
       }
     }
     if (bodyParam !== undefined) {
@@ -81,67 +80,70 @@ export function modify(userParam: string, titleParam: string, newTitle?: string,
 
     try {
       fs.writeFileSync(`./fileSystem/${userParam}/${value.title}.json`, addJson);
-      console.log(chalk.green('The note has been modified!'));
+      out = chalk.green('The note has been modified!');
     } catch (err) {
-      console.log(chalk.red('Error: Something went wrong when writing note'));
+      out = chalk.red('Error: Something went wrong when writing note');
     }
   } else {
-    console.log(chalk.red('Error: This note does not exist'));
+    out = chalk.red('Error: This note does not exist');
   }
+  return out;
 }
 
-export function remove(userParam: string, titleParam: string) {
+export function remove(userParam: string, titleParam: string): string {
+  let out: string;
   if ((fs.existsSync(`./fileSystem/${userParam}/${titleParam}.json`))) {
-    fs.unlink(`./fileSystem/${userParam}/${titleParam}.json`, (err) => {
-      if (err) {
-        console.log(chalk.red('Error: Something went wrong when remove note'));
-      } else {
-        console.log(chalk.green('Note removed!'));
-      }
-    });
+    try {
+      fs.unlinkSync(`./fileSystem/${userParam}/${titleParam}.json`);
+      out = chalk.green('Note removed!');
+    } catch (err) {
+      out = chalk.red('Error: Something went wrong when remove note');
+    }
   } else {
-    console.log(chalk.red('Error: This note does not exist'));
+    out = chalk.red('Error: This note does not exist');
   }
+  return out;
 }
 
-export function list(userParam: string) {
+export function list(userParam: string): string {
+  let out: string;
   if ((fs.existsSync(`./fileSystem/${userParam}/`))) {
-    console.log(chalk.green('Your notes:\n'));
-    fs.readdir(`./fileSystem/${userParam}/`, (err, files) => {
-      if (err) {
-        console.log(chalk.red('Error: Something went wrong when list note'));
-      } else {
-        files.forEach((file) => {
-          fs.readFile(`./fileSystem/${userParam}/${file}`, (err, data) => {
-            if (err) {
-              console.log(chalk.red('Error: Something went wrong when read note'));
-            } else {
-              const value = JSON.parse(data.toString());
-              printWithColor(value.title, value.color);
-            }
-          });
-        });
-      }
-    });
+    out = chalk.green('Your notes:\n');
+    try {
+      const files = fs.readdirSync(`./fileSystem/${userParam}/`);
+      files.forEach((file) => {
+        try {
+          const data = fs.readFileSync(`./fileSystem/${userParam}/${file}`);
+          const value = JSON.parse(data.toString());
+          out += printWithColor(value.title, value.color) + '\n';
+        } catch (err) {
+          out = chalk.red('Error: Something went wrong when read note');
+        }
+      });
+    } catch (err) {
+      out = chalk.red('Error: Something went wrong when list note');
+    }
   } else {
-    console.log(chalk.red('Error: This user does not exist'));
+    out = chalk.red('Error: This user does not exist');
   }
+  return out;
 }
 
-export function read(userParam: string, titleParam: string) {
+export function read(userParam: string, titleParam: string): string {
+  let out: string;
   if ((fs.existsSync(`./fileSystem/${userParam}/${titleParam}.json`))) {
-    fs.readFile(`./fileSystem/${userParam}/${titleParam}.json`, (err, data) => {
-      if (err) {
-        console.log(chalk.red('Error: Something went wrong when read note'));
-      } else {
-        const value = JSON.parse(data.toString());
-        printWithColor(value.title, value.color);
-        printWithColor(value.body, value.color);
-      }
-    });
+    try {
+      const data = fs.readFileSync(`./fileSystem/${userParam}/${titleParam}.json`);
+      const value = JSON.parse(data.toString());
+      out = printWithColor(value.title, value.color) + '\n';
+      out += printWithColor(value.body, value.color);
+    } catch (err) {
+      out = chalk.red('Error: Something went wrong when read note');
+    }
   } else {
-    console.log(chalk.red('Error: This note does not exist'));
+    out = chalk.red('Error: This note does not exist');
   }
+  return out;
 }
 
 

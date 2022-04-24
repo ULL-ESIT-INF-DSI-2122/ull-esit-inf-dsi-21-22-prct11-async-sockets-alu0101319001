@@ -29,7 +29,7 @@ yargs.command({
   handler(argv) {
     if ((typeof argv.title === 'string') && (typeof argv.user === 'string') &&
     (typeof argv.body === 'string') && (typeof argv.color === 'string')) {
-      add(argv.user, argv.title, argv.body, argv.color);
+      console.log(add(argv.user, argv.title, argv.body, argv.color));
     }
   },
 });
@@ -84,7 +84,7 @@ yargs.command({
       } else {
         color = undefined;
       }
-      modify(argv.user, argv.title, newTitle, body, color);
+      console.log(modify(argv.user, argv.title, newTitle, body, color));
     }
   },
 });
@@ -106,7 +106,7 @@ yargs.command({
   },
   handler(argv) {
     if ((typeof argv.title === 'string') && (typeof argv.user === 'string')) {
-      remove(argv.user, argv.title);
+      console.log(remove(argv.user, argv.title));
     }
   },
 });
@@ -123,7 +123,7 @@ yargs.command({
   },
   handler(argv) {
     if ((typeof argv.user === 'string')) {
-      list(argv.user);
+      console.log(list(argv.user));
     }
   },
 });
@@ -145,7 +145,7 @@ yargs.command({
   },
   handler(argv) {
     if ((typeof argv.title === 'string') && (typeof argv.user === 'string')) {
-      read(argv.user, argv.title);
+      console.log(read(argv.user, argv.title));
     }
   },
 });
