@@ -27,7 +27,7 @@ yargs.command({
       type: 'string',
     },
     color: {
-      describe: 'Note title',
+      describe: 'Color of the note',
       demandOption: true,
       type: 'string',
     },
