@@ -1,6 +1,7 @@
 {
   "entryPoints": [
-    "./src/mod1.ts"
+    "./src/note-functions.ts",
+    "./src/note-app.ts"
   ], 
   "out": "./docs"
 }

@@ -1,8 +1,17 @@
 /* eslint-disable max-len */
 import chalk from 'chalk';
 import fs from 'fs';
+/**
+ * Defines the accepted colors
+ */
 export const colorRegister = ['red', 'yellow', 'green', 'blue'];
 
+/**
+ * Print a text with color
+ * @param print Text to print
+ * @param color Color of text
+ * @returns The text with color
+ */
 export function printWithColor(print: string, color: string): string {
   switch (color) {
     case 'red': {
@@ -23,6 +32,14 @@ export function printWithColor(print: string, color: string): string {
   }
 }
 
+/**
+ * Add a note
+ * @param userParam Active user
+ * @param titleParam Title of note
+ * @param bodyParam Body of note
+ * @param colorParam Color of note
+ * @returns The status message
+ */
 export function add(userParam: string, titleParam: string, bodyParam: string, colorParam: string): string {
   if (!fs.existsSync(`./fileSystem/${userParam}`)) {
     fs.mkdirSync(`./fileSystem/${userParam}/`, {recursive: true});
@@ -57,6 +74,15 @@ export function add(userParam: string, titleParam: string, bodyParam: string, co
   return out;
 }
 
+/**
+ * Modify a note
+ * @param userParam Active user
+ * @param titleParam Title of note to modify
+ * @param newTitle New title of the note
+ * @param bodyParam New body of the note
+ * @param colorParam New color of the note
+ * @returns The status message
+ */
 export function modify(userParam: string, titleParam: string, newTitle?: string, bodyParam?: string, colorParam?: string): string {
   let out: string;
   if ((fs.existsSync(`./fileSystem/${userParam}/${titleParam}.json`))) {
@@ -90,6 +116,12 @@ export function modify(userParam: string, titleParam: string, newTitle?: string,
   return out;
 }
 
+/**
+ * Remove a note
+ * @param userParam Active user
+ * @param titleParam Title of note to remove
+ * @returns The status message
+ */
 export function remove(userParam: string, titleParam: string): string {
   let out: string;
   if ((fs.existsSync(`./fileSystem/${userParam}/${titleParam}.json`))) {
@@ -105,6 +137,11 @@ export function remove(userParam: string, titleParam: string): string {
   return out;
 }
 
+/**
+ * List notes of an user
+ * @param userParam Active user
+ * @returns The status message
+ */
 export function list(userParam: string): string {
   let out: string;
   if ((fs.existsSync(`./fileSystem/${userParam}/`))) {
@@ -129,6 +166,12 @@ export function list(userParam: string): string {
   return out;
 }
 
+/**
+ * Read a note
+ * @param userParam Active user
+ * @param titleParam Tittle of the note to read
+ * @returns The status message
+ */
 export function read(userParam: string, titleParam: string): string {
   let out: string;
   if ((fs.existsSync(`./fileSystem/${userParam}/${titleParam}.json`))) {

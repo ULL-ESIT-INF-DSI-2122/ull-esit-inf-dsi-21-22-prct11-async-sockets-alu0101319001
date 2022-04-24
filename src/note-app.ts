@@ -1,6 +1,12 @@
+/* eslint-disable max-len */
 import * as yargs from 'yargs';
 import {add, list, remove, read, modify} from './note-functions';
 
+/**
+ * Define the command add
+ * Usage:
+ * `$node dist/note-app.js add --user="eduardo" --title="Red note" --body="Is a red note" --color="red"`
+ */
 yargs.command({
   command: 'add',
   describe: 'Add a new note',
@@ -34,6 +40,11 @@ yargs.command({
   },
 });
 
+/**
+ * Define the command modify
+ * Usage:
+ * `$node dist/note-app.js modify --user="eduardo" --title="Red note" --newTitle="redNote" --body="Is a red note" --color="red"`
+ */
 yargs.command({
   command: 'modify',
   describe: 'Modify a note',
@@ -89,6 +100,11 @@ yargs.command({
   },
 });
 
+/**
+ * Define the command remove
+ * Usage:
+ * `$node dist/note-app.js remove --user="eduardo" --title="Red note"`
+ */
 yargs.command({
   command: 'remove',
   describe: 'Remove a note',
@@ -111,6 +127,11 @@ yargs.command({
   },
 });
 
+/**
+ * Define the command list
+ * Usage:
+ * `$node dist/note-app.js list --user="eduardo"`
+ */
 yargs.command({
   command: 'list',
   describe: 'List all notes of a user',
@@ -128,6 +149,11 @@ yargs.command({
   },
 });
 
+/**
+ * Define the command read
+ * Usage:
+ * `$node dist/note-app.js read --user="eduardo" --title="Red note"`
+ */
 yargs.command({
   command: 'read',
   describe: 'Read a note',
@@ -150,4 +176,7 @@ yargs.command({
   },
 });
 
+/**
+ * Interpret the commands
+ */
 yargs.parse();
