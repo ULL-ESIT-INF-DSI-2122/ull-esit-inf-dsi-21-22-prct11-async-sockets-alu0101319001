@@ -1,7 +1,15 @@
 import chalk from 'chalk';
 
+/**
+ * Define a Color
+ */
 export type Color = "red" | "blue" | "yellow" | "green" | undefined;
 
+/**
+ * Translate a string to a Color
+ * @param colorString The string to transalte
+ * @returns The correct color
+ */
 export function translateColor(colorString: string): Color {
   let returnColor : Color;
   if (colorString == "red") {
