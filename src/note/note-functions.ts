@@ -1,36 +1,9 @@
 /* eslint-disable max-len */
 import chalk from 'chalk';
 import fs from 'fs';
-/**
- * Defines the accepted colors
- */
-export const colorRegister = ['red', 'yellow', 'green', 'blue'];
+import {Color, translateColor, printWithColor} from '../types/color';
+import {Note} from './note-class';
 
-/**
- * Print a text with color
- * @param print Text to print
- * @param color Color of text
- * @returns The text with color
- */
-export function printWithColor(print: string, color: string): string {
-  switch (color) {
-    case 'red': {
-      return chalk.red(print);
-    }
-    case 'yellow': {
-      return chalk.yellow(print);
-    }
-    case 'blue': {
-      return chalk.blue(print);
-    }
-    case 'green': {
-      return chalk.green(print);
-    }
-    default: {
-      return chalk.red('Error: Unrecognizable color');
-    }
-  }
-}
 
 /**
  * Add a note
@@ -45,20 +18,13 @@ export function add(userParam: string, titleParam: string, bodyParam: string, co
     fs.mkdirSync(`./fileSystem/${userParam}/`, {recursive: true});
   }
 
-  const obj = {
-    title: 'empty',
-    body: 'empty',
-    color: 'empty',
-  };
-
   let out:string = '';
+  const colorValue: Color = translateColor(colorParam);
 
   if ((!fs.existsSync(`./fileSystem/${userParam}/${titleParam}.json`))) {
-    if (colorRegister.includes(colorParam)) {
-      obj.title = titleParam;
-      obj.body = bodyParam;
-      obj.color = colorParam;
-      const addJson = JSON.stringify(obj);
+    if (colorValue != undefined) {
+      const newNote = new Note(titleParam, bodyParam, colorValue);
+      const addJson = newNote.getNoteString();
       try {
         fs.writeFileSync(`./fileSystem/${userParam}/${titleParam}.json`, addJson);
         out = chalk.green('New note added!');
@@ -85,27 +51,29 @@ export function add(userParam: string, titleParam: string, bodyParam: string, co
  */
 export function modify(userParam: string, titleParam: string, newTitle?: string, bodyParam?: string, colorParam?: string): string {
   let out: string;
+  const modifyNote = new Note('empty', 'empty', undefined);
   if ((fs.existsSync(`./fileSystem/${userParam}/${titleParam}.json`))) {
     const data = fs.readFileSync(`./fileSystem/${userParam}/${titleParam}.json`, 'utf8');
-    const value = JSON.parse(data.toString());
+    modifyNote.setWithString(data.toString());
     if (newTitle !== undefined) {
-      value.title = newTitle;
+      modifyNote.setValues(newTitle);
       try {
-        fs.renameSync(`./fileSystem/${userParam}/${titleParam}.json`, `./fileSystem/${userParam}/${value.title}.json`);
+        fs.renameSync(`./fileSystem/${userParam}/${titleParam}.json`, `./fileSystem/${userParam}/${modifyNote.title}.json`);
       } catch (err) {
         out = chalk.red('Error: Something went wrong when rename note file');
       }
     }
     if (bodyParam !== undefined) {
-      value.body = bodyParam;
+      modifyNote.setValues(undefined, bodyParam);
     }
     if (colorParam !== undefined) {
-      value.color = colorParam;
+      const newColor = translateColor(colorParam);
+      modifyNote.setValues(undefined, undefined, newColor);
     }
-    const addJson = JSON.stringify(value);
+    const addJson = modifyNote.getNoteString();
 
     try {
-      fs.writeFileSync(`./fileSystem/${userParam}/${value.title}.json`, addJson);
+      fs.writeFileSync(`./fileSystem/${userParam}/${modifyNote.title}.json`, addJson);
       out = chalk.green('The note has been modified!');
     } catch (err) {
       out = chalk.red('Error: Something went wrong when writing note');
@@ -144,6 +112,7 @@ export function remove(userParam: string, titleParam: string): string {
  */
 export function list(userParam: string): string {
   let out: string;
+  const note = new Note('empty', 'empty', undefined);
   if ((fs.existsSync(`./fileSystem/${userParam}/`))) {
     out = chalk.green('Your notes:\n');
     try {
@@ -151,8 +120,8 @@ export function list(userParam: string): string {
       files.forEach((file) => {
         try {
           const data = fs.readFileSync(`./fileSystem/${userParam}/${file}`);
-          const value = JSON.parse(data.toString());
-          out += printWithColor(value.title, value.color) + '\n';
+          note.setWithString(data.toString());
+          out += printWithColor(note.title, note.color) + '\n';
         } catch (err) {
           out = chalk.red('Error: Something went wrong when read note');
         }
@@ -174,12 +143,13 @@ export function list(userParam: string): string {
  */
 export function read(userParam: string, titleParam: string): string {
   let out: string;
+  const note = new Note('empty', 'empty', undefined);
   if ((fs.existsSync(`./fileSystem/${userParam}/${titleParam}.json`))) {
     try {
       const data = fs.readFileSync(`./fileSystem/${userParam}/${titleParam}.json`);
-      const value = JSON.parse(data.toString());
-      out = printWithColor(value.title, value.color) + '\n';
-      out += printWithColor(value.body, value.color);
+      note.setWithString(data.toString());
+      out = printWithColor(note.title, note.color) + '\n';
+      out += printWithColor(note.body, note.color);
     } catch (err) {
       out = chalk.red('Error: Something went wrong when read note');
     }

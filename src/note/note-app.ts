@@ -1,6 +1,9 @@
 /* eslint-disable max-len */
 import * as yargs from 'yargs';
-import {add, list, remove, read, modify} from './note-functions';
+import {Client} from '../client/client';
+import {Color, translateColor} from '../types/color';
+import {Command} from '../types/commands';
+import {RequestType} from '../types/request';
 
 /**
  * Define the command add
@@ -35,7 +38,18 @@ yargs.command({
   handler(argv) {
     if ((typeof argv.title === 'string') && (typeof argv.user === 'string') &&
     (typeof argv.body === 'string') && (typeof argv.color === 'string')) {
-      console.log(add(argv.user, argv.title, argv.body, argv.color));
+      const command: Command = 'add';
+      const color: Color = translateColor(argv.color);
+      const input : RequestType = {
+        type: command,
+        user: argv.user,
+        title: argv.title,
+        newTittle: undefined,
+        body: argv.body,
+        color: color,
+      };
+      const client = new Client(60300, input);
+      client.active();
     }
   },
 });
@@ -91,11 +105,21 @@ yargs.command({
         body = undefined;
       }
       if (typeof argv.color === 'string') {
-        color = argv.color;
+        color = translateColor(argv.color);
       } else {
         color = undefined;
       }
-      console.log(modify(argv.user, argv.title, newTitle, body, color));
+      const command: Command = 'modify';
+      const input : RequestType = {
+        type: command,
+        user: argv.user,
+        title: argv.title,
+        newTittle: newTitle,
+        body: body,
+        color: color,
+      };
+      const client = new Client(60300, input);
+      client.active();
     }
   },
 });
@@ -122,7 +146,17 @@ yargs.command({
   },
   handler(argv) {
     if ((typeof argv.title === 'string') && (typeof argv.user === 'string')) {
-      console.log(remove(argv.user, argv.title));
+      const command: Command = 'remove';
+      const input : RequestType = {
+        type: command,
+        user: argv.user,
+        title: argv.title,
+        newTittle: undefined,
+        body: undefined,
+        color: undefined,
+      };
+      const client = new Client(60300, input);
+      client.active();
     }
   },
 });
@@ -144,7 +178,17 @@ yargs.command({
   },
   handler(argv) {
     if ((typeof argv.user === 'string')) {
-      console.log(list(argv.user));
+      const command: Command = 'list';
+      const input : RequestType = {
+        type: command,
+        user: argv.user,
+        title: undefined,
+        newTittle: undefined,
+        body: undefined,
+        color: undefined,
+      };
+      const client = new Client(60300, input);
+      client.active();
     }
   },
 });
@@ -171,7 +215,17 @@ yargs.command({
   },
   handler(argv) {
     if ((typeof argv.title === 'string') && (typeof argv.user === 'string')) {
-      console.log(read(argv.user, argv.title));
+      const command: Command = 'read';
+      const input : RequestType = {
+        type: command,
+        user: argv.user,
+        title: argv.title,
+        newTittle: undefined,
+        body: undefined,
+        color: undefined,
+      };
+      const client = new Client(60300, input);
+      client.active();
     }
   },
 });
