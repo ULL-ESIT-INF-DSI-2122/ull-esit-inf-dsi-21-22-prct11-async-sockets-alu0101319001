@@ -26,7 +26,16 @@ export class Client {
 
     clientEvent.on('response', (message) => {
       console.log(chalk.green('Receiving response...'));
-      console.log(message);
+      console.log(message.response);
+      this.clientSocket.end();
+    });
+
+    this.clientSocket.on('close', (err) => {
+      if (err) {
+        console.log(chalk.red('Error: In closing client socket'));
+      } else {
+        console.log(chalk.green('Closing client socket...'));
+      }
     });
   }
 }

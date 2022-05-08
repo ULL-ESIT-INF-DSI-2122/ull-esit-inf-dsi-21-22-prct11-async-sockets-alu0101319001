@@ -20,7 +20,8 @@ export class Server {
       server.on('request', (message) => {
         console.log(chalk.green('Receiving request...'));
         const response = this.handlerRequest(message);
-        connection.write(response, (err) => {
+        const json = {type: 'response', response: response};
+        connection.write(JSON.stringify(json) + '\n', (err) => {
           if (err) {
             console.log(chalk.red('Error sending response'));
           } else {
@@ -48,7 +49,7 @@ export class Server {
     } else if (message.type = undefined) {
       response = chalk.red('Error: Undefined command');
     }
-    return response + '\n';
+    return response;
   }
 }
 

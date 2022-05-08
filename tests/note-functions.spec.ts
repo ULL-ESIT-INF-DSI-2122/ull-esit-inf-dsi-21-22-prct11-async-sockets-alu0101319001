@@ -3,9 +3,10 @@ import 'mocha';
 import {expect} from 'chai';
 import chalk from 'chalk';
 import fs from 'fs';
-import {add, list, modify, printWithColor, read, remove} from '../src/note-functions';
+import {add, list, modify, read, remove} from '../src/note/note-functions';
+import {printWithColor} from '../src/types/color';
 
-context('Práctica 9 - Aplicación de procesamiento de notas de texto', () => {
+context('Test of Note Functions', () => {
   describe('Aux functions', () => {
     it('PrintWithColor - Blue', () => {
       expect(printWithColor('print', 'blue')).to.be.eql(chalk.blue('print'));
@@ -18,9 +19,6 @@ context('Práctica 9 - Aplicación de procesamiento de notas de texto', () => {
     });
     it('PrintWithColor - Red', () => {
       expect(printWithColor('print', 'red')).to.be.eql(chalk.red('print'));
-    });
-    it('PrintWithColor - Brown - Unrecognizable color', () => {
-      expect(printWithColor('print', 'brown')).to.be.eql(chalk.red('Error: Unrecognizable color'));
     });
   });
 
